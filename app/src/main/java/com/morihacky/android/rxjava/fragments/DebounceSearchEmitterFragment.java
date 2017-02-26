@@ -15,6 +15,8 @@ import android.widget.ListView;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.morihacky.android.rxjava.R;
+import com.morihacky.android.rxjava.retrofit.GithubApi;
+import com.morihacky.android.rxjava.retrofit.GithubService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,8 @@ public class DebounceSearchEmitterFragment
     private List<String> _logs;
 
     private Disposable _disposable;
+
+    private GithubApi _githubService;
 
     @Override
     public void onDestroy() {
@@ -71,9 +75,15 @@ public class DebounceSearchEmitterFragment
         super.onActivityCreated(savedInstanceState);
         _setupLogger();
 
+        String githubToken = getResources().getString(R.string.github_oauth_token);
+        _githubService = GithubService.createGithubService(githubToken);
+
+//        _inputSearchText.setText("retrofit");
+
         _disposable = RxJavaInterop.toV2Observable(RxTextView.textChangeEvents(_inputSearchText))
+                // http://reactivex.io/documentation/operators/debounce.html
               .debounce(400, TimeUnit.MILLISECONDS)// default Scheduler is Computation
-              .filter(changes -> isNotNullOrEmpty(changes.text().toString()))
+                .filter(changes -> isNotNullOrEmpty(changes.text().toString()))
               .observeOn(AndroidSchedulers.mainThread())
               .subscribeWith(_getSearchObserver());
     }
@@ -138,4 +148,11 @@ public class DebounceSearchEmitterFragment
             super(context, R.layout.item_log, R.id.item_log, logs);
         }
     }
+
+//    .observeOn(Schedulers.io())
+//            .flatMap(changeEvent -> {
+//        final String text = changeEvent.view().getText().toString();
+//        return _githubService.contributors("square", text)
+//                .onErrorResumeNext(Observable.empty());
+//    })
 }
