@@ -29,6 +29,12 @@ public class FormValidationCombineLatestFragment
     @Bind(R.id.demo_combl_num) EditText _number;
 
     private DisposableSubscriber<Boolean> _disposableObserver = null;
+    /**
+     * Flowable을 언제 사용하나? Flowable vs Observable
+     * https://github.com/ReactiveX/RxJava/wiki/What's-different-in-2.0
+     * https://medium.com/@theMikhail/rxjava2-an-early-preview-5b05de46b07#.f9vhi98il
+     * http://javaexpert.tistory.com/649
+     */
     private Flowable<CharSequence> _emailChangeObservable;
     private Flowable<CharSequence> _numberChangeObservable;
     private Flowable<CharSequence> _passwordChangeObservable;

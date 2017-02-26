@@ -45,6 +45,7 @@ public class RxBusDemo_Bottom3Fragment
         super.onStart();
         _disposables = new CompositeDisposable();
 
+        // http://blog.danlew.net/2016/06/13/multicasting-in-rxjava/
         ConnectableFlowable<Object> tapEventEmitter = _rxBus.asFlowable().publish();
 
         _disposables//
