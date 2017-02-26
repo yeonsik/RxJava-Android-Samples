@@ -34,11 +34,14 @@ import static android.text.TextUtils.isEmpty;
 import static java.lang.String.format;
 
 public class RetrofitFragment
-      extends Fragment {
+        extends Fragment {
 
-    @Bind(R.id.demo_retrofit_contributors_username) EditText _username;
-    @Bind(R.id.demo_retrofit_contributors_repository) EditText _repo;
-    @Bind(R.id.log_list) ListView _resultList;
+    @Bind(R.id.demo_retrofit_contributors_username)
+    EditText _username;
+    @Bind(R.id.demo_retrofit_contributors_repository)
+    EditText _repo;
+    @Bind(R.id.log_list)
+    ListView _resultList;
 
     private ArrayAdapter<String> _adapter;
     private GithubApi _githubService;
@@ -85,9 +88,9 @@ public class RetrofitFragment
         _adapter.clear();
 
         _disposables.add(//
-              _githubService.contributors(_username.getText().toString(), _repo.getText().toString())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                _githubService.contributors(_username.getText().toString(), _repo.getText().toString())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
                     .subscribeWith(new DisposableObserver<List<Contributor>>() {
 
                         @Override
@@ -115,6 +118,10 @@ public class RetrofitFragment
                             }
                         }
                     }));
+
+//        .subscribe(contributors -> setContributorList(contributors)
+//                , throwable -> Timber.e(throwable, "woops we got an error while getting the list of contributors")
+//                , () -> Timber.d("Retrofit call 1 completed")));
     }
 
     @OnClick(R.id.btn_demo_retrofit_contributors_with_user_info)
@@ -122,47 +129,80 @@ public class RetrofitFragment
         _adapter.clear();
 
         _disposables.add(_githubService.contributors(_username.getText().toString(), _repo.getText().toString())
-              .flatMap(Observable::fromIterable)
-              .flatMap(contributor -> {
-                  Observable<User> _userObservable = _githubService.user(contributor.login)
-                        .filter(user -> !isEmpty(user.name) && !isEmpty(user.email));
+                .flatMap(Observable::fromIterable)
+                .flatMap(contributor -> {
+                    Observable<User> _userObservable = _githubService.user(contributor.login)
+                            .filter(user -> !isEmpty(user.name) && !isEmpty(user.email));
 
-                  return Observable.zip(_userObservable,
-                        Observable.just(contributor),
-                        Pair::new);
-              })
-              .subscribeOn(Schedulers.newThread())
-              .observeOn(AndroidSchedulers.mainThread())
-              .subscribeWith(new DisposableObserver<Pair<User,Contributor>>() {
-                  @Override
-                  public void onComplete() {
-                      Timber.d("Retrofit call 2 completed ");
-                  }
+                    return Observable.zip(_userObservable,
+                            Observable.just(contributor),
+                            Pair::new);
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableObserver<Pair<User, Contributor>>() {
+                    @Override
+                    public void onComplete() {
+                        Timber.d("Retrofit call 2 completed ");
+                    }
 
-                  @Override
-                  public void onError(Throwable e) {
-                      Timber.e(e, "error while getting the list of contributors along with full " + "names");
-                  }
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "error while getting the list of contributors along with full " + "names");
+                    }
 
-                  @Override
-                  public void onNext(Pair pair) {
-                      User user = ((Pair<User, Contributor>)pair).first;
-                      Contributor contributor = ((Pair<User, Contributor>)pair).second;
+                    @Override
+                    public void onNext(Pair<User, Contributor> pair) {
+                        User user = pair.first;
+                        Contributor contributor = pair.second;
 
-                      _adapter.add(format("%s(%s) has made %d contributions to %s",
-                            user.name,
-                            user.email,
-                            contributor.contributions,
-                            _repo.getText().toString()));
+                        _adapter.add(format("%s(%s) has made %d contributions to %s",
+                                user.name,
+                                user.email,
+                                contributor.contributions,
+                                _repo.getText().toString()));
 
-                      _adapter.notifyDataSetChanged();
+                        _adapter.notifyDataSetChanged();
 
-                      Timber.d("%s(%s) has made %d contributions to %s",
-                            user.name,
-                            user.email,
-                            contributor.contributions,
-                            _repo.getText().toString());
-                  }
-              }));
+                        Timber.d("%s(%s) has made %d contributions to %s",
+                                user.name,
+                                user.email,
+                                contributor.contributions,
+                                _repo.getText().toString());
+                    }
+                }));
     }
+
+    private void setContributorList(List<Contributor> contributorList) {
+        for (Contributor c : contributorList) {
+            _adapter.add(format("%s has made %d contributions to %s",
+                    c.login,
+                    c.contributions,
+                    _repo.getText().toString()));
+
+            Timber.d("%s has made %d contributions to %s",
+                    c.login,
+                    c.contributions,
+                    _repo.getText().toString());
+        }
+    }
+
+    class FullUserData {
+        User user;
+        Contributor contributor;
+
+        public FullUserData(User user, Contributor contributor) {
+            this.user = user;
+            this.contributor = contributor;
+        }
+    }
+
+//    return Observable.zip(_userObservable,
+//            Observable.just(contributor),
+//            new BiFunction<User, Contributor, Object>() {
+//        @Override
+//        public Object apply(User user, Contributor contributor) throws Exception {
+//            return new FullUserData(user, contributor);
+//        }
+//    });
 }
