@@ -34,6 +34,9 @@ public class FormValidationCombineLatestFragment
      * https://github.com/ReactiveX/RxJava/wiki/What's-different-in-2.0
      * https://medium.com/@theMikhail/rxjava2-an-early-preview-5b05de46b07#.f9vhi98il
      * http://javaexpert.tistory.com/649
+     *
+     * MissingBackpressureException
+     * http://kunny.github.io/community/2016/02/08/gdg_korea_android_weekly_02_1/
      */
     private Flowable<CharSequence> _emailChangeObservable;
     private Flowable<CharSequence> _numberChangeObservable;

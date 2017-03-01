@@ -47,6 +47,7 @@ public class RxBusDemo_Bottom2Fragment
         super.onStart();
         _disposables = new CompositeDisposable();
 
+        // http://realignist.me/code/2016/05/29/rxjava-on-android.html
         Flowable<Object> tapEventEmitter = _rxBus
               .asFlowable()
               .share();

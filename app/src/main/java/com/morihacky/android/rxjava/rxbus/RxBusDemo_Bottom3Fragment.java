@@ -46,6 +46,9 @@ public class RxBusDemo_Bottom3Fragment
         _disposables = new CompositeDisposable();
 
         // http://blog.danlew.net/2016/06/13/multicasting-in-rxjava/
+        // cold / hot observable
+        // https://moka-a.github.io/android/rxAndroid_study/
+        // https://gist.github.com/QuadFlask/145e80b4ac54d1541e2d38d9ce762a57
         ConnectableFlowable<Object> tapEventEmitter = _rxBus.asFlowable().publish();
 
         _disposables//
