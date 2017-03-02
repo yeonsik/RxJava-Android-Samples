@@ -8,6 +8,11 @@ import com.morihacky.android.rxjava.fragments.RotationPersist1WorkerFragment;
 import com.morihacky.android.rxjava.fragments.RotationPersist2WorkerFragment;
 import com.morihacky.android.rxjava.rxbus.RxBus;
 
+/**
+ * rx 디버깅 라이브러리
+ * https://github.com/android10/frodo
+ * https://github.com/ReactiveX/RxJavaDebug
+ */
 public class MainActivity
       extends FragmentActivity {
 

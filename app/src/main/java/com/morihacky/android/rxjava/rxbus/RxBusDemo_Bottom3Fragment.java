@@ -49,6 +49,7 @@ public class RxBusDemo_Bottom3Fragment
         // cold / hot observable
         // https://moka-a.github.io/android/rxAndroid_study/
         // https://gist.github.com/QuadFlask/145e80b4ac54d1541e2d38d9ce762a57
+        // http://blog.kaush.co/2015/01/05/debouncedbuffer-with-rxjava/
         ConnectableFlowable<Object> tapEventEmitter = _rxBus.asFlowable().publish();
 
         _disposables//
