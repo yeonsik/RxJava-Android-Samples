@@ -105,17 +105,7 @@ public class RetrofitFragment
 
                         @Override
                         public void onNext(List<Contributor> contributors) {
-                            for (Contributor c : contributors) {
-                                _adapter.add(format("%s has made %d contributions to %s",
-                                      c.login,
-                                      c.contributions,
-                                      _repo.getText().toString()));
-
-                                Timber.d("%s has made %d contributions to %s",
-                                      c.login,
-                                      c.contributions,
-                                      _repo.getText().toString());
-                            }
+                            setContributorList(contributors);
                         }
                     }));
 

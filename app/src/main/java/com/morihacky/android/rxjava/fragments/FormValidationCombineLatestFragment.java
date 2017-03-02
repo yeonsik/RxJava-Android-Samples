@@ -30,12 +30,16 @@ public class FormValidationCombineLatestFragment
 
     private DisposableSubscriber<Boolean> _disposableObserver = null;
     /**
-     * Flowable을 언제 사용하나? Flowable vs Observable
+     * 1.x to 2.x
      * https://github.com/ReactiveX/RxJava/wiki/What's-different-in-2.0
-     * https://medium.com/@theMikhail/rxjava2-an-early-preview-5b05de46b07#.f9vhi98il
-     * http://javaexpert.tistory.com/649
+     * http://realignist.me/code/2017/01/25/rxjava2-changelog.html
+     * https://realm.io/news/gotocph-jake-wharton-exploring-rxjava2-android/
+     *
+     * Flowable
+     * http://reactivex.io/RxJava/2.x/javadoc/io/reactivex/Flowable.html
      *
      * MissingBackpressureException
+     * http://javaexpert.tistory.com/649
      * http://kunny.github.io/community/2016/02/08/gdg_korea_android_weekly_02_1/
      */
     private Flowable<CharSequence> _emailChangeObservable;
