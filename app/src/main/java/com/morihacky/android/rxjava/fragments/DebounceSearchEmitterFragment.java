@@ -28,6 +28,8 @@ import butterknife.OnClick;
 import hu.akarnokd.rxjava.interop.RxJavaInterop;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 import io.reactivex.observers.DisposableObserver;
 import timber.log.Timber;
 
@@ -83,7 +85,12 @@ public class DebounceSearchEmitterFragment
         _disposable = RxJavaInterop.toV2Observable(RxTextView.textChangeEvents(_inputSearchText))
                 // http://reactivex.io/documentation/operators/debounce.html
               .debounce(400, TimeUnit.MILLISECONDS)// default Scheduler is Computation
+
+                // 일반 방식
                 .filter(changes -> isNotNullOrEmpty(changes.text().toString()))
+                // 렉시컬 스코프 방식을 사용한 코드 중복 처리
+                .filter(isNotEmpty())
+                .filter(isNotEmpty)
               .observeOn(AndroidSchedulers.mainThread())
               .subscribeWith(_getSearchObserver());
     }
@@ -148,6 +155,16 @@ public class DebounceSearchEmitterFragment
             super(context, R.layout.item_log, R.id.item_log, logs);
         }
     }
+
+    // -----------------------------------------------------------------------------------
+    // 람다 표현식의 코드 중복 처리하기
+
+    private Predicate<TextViewTextChangeEvent> isNotEmpty() {
+        return changes -> isNotNullOrEmpty(changes.text().toString());
+    }
+
+    final Predicate<TextViewTextChangeEvent> isNotEmpty =
+            changes -> isNotNullOrEmpty(changes.text().toString());
 
 //    .observeOn(Schedulers.io())
 //            .flatMap(changeEvent -> {
